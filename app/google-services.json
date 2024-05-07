@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "671905406203",
+    "project_id": "cardio-link-52942",
+    "storage_bucket": "cardio-link-52942.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:671905406203:android:f25463f30510105df0645e",
+        "android_client_info": {
+          "package_name": "com.example.cardiolink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkLG_vj7kl0zbLhYhobYZPcvLH9QvrwMw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
