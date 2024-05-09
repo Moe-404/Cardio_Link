@@ -39,6 +39,7 @@ android {
     }
     buildFeatures {
         compose = true
+        mlModelBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -66,6 +67,7 @@ dependencies {
     implementation(libs.androidx.compose.material)
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.auth)
+    implementation(libs.play.services.cast.framework)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,4 +78,22 @@ dependencies {
     // Add the following line
     implementation("androidx.compose.material:material-icons-extended:1.6.7")
     implementation("androidx.compose.runtime:runtime-livedata:1.6.7")
+    //Coli
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
+    //retrofit
+    //retrofit-core
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    //retrofit-converter-moshi
+    implementation ("com.squareup.retrofit2:converter-moshi:2.9.0")
+    //okhttp
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
+    //moshi
+    implementation ("com.squareup.moshi:moshi-kotlin:1.15.1")
+
+    //tensorflow lite dependencies
+    implementation("org.tensorflow:tensorflow-lite-support:0.3.0")
+    implementation("org.tensorflow:tensorflow-lite:0.3.0")
+    implementation("org.tensorflow:tensorflow-lite-metadata:0.3.0")
 }

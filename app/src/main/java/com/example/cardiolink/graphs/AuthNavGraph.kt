@@ -10,24 +10,24 @@ import com.example.cardiolink.views.LoginScreen
 import com.example.cardiolink.views.RegisterScreen
 import com.example.cardiolink.views.SplashScreen
 
-fun NavGraphBuilder.authNavGraph(navController: NavHostController, viewModel: AuthViewModel) {
+fun NavGraphBuilder.authNavGraph(rootNavController: NavHostController, viewModel: AuthViewModel) {
     navigation(
-        route = Graph.AUTHENTICATION,
+        route = Graph.AuthGraph,
         startDestination = AuthScreen.SPLASH.route
     ) {
 
         composable(route = AuthScreen.SPLASH.route) {
-            SplashScreen(navController = navController)
+            SplashScreen(navController = rootNavController)
         }
 
         composable(route = AuthScreen.Login.route) {
-            LoginScreen(navController = navController, viewModel)
+            LoginScreen(navController = rootNavController, viewModel)
         }
         composable(route = AuthScreen.SignUp.route) {
-            RegisterScreen(navController = navController, viewModel)
+            RegisterScreen(navController = rootNavController, viewModel)
         }
         composable(route = AuthScreen.Forgot.route) {
-            ForgotPasswordScreen(navController = navController)
+            ForgotPasswordScreen(navController = rootNavController)
         }
     }
 }

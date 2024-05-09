@@ -4,68 +4,37 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.cardiolink.views.BottomBarScreen
+import com.example.cardiolink.views.HistoryContent
+import com.example.cardiolink.views.HomeContent
+import com.example.cardiolink.views.InfoContent
 import com.example.cardiolink.views.ProfileContent
-import com.example.cardiolink.views.ScreenContent
+import com.example.cardiolink.views.ScanContent
+import com.example.cardiolink.views.Utils
 
 @Composable
-fun HomeNavGraph(navController: NavHostController) {
+fun HomeNavGraph(
+    rootNavController: NavHostController,
+    homeNavController: NavHostController
+) {
     NavHost(
-        navController = navController,
-        route = Graph.HOME,
-        startDestination = BottomBarScreen.Home.route
+        navController = homeNavController,
+        route = Graph.HomeGraph,
+        startDestination = Utils.Home.route
     ) {
-        composable(route = BottomBarScreen.Home.route) {
-            ScreenContent(
-                name = BottomBarScreen.Home.route,
-                onClick = { }
-            )
+        composable(route = Utils.Home.route) {
+            HomeContent()
         }
-        composable(route = BottomBarScreen.Scan.route) {
-            ScreenContent(
-                name = BottomBarScreen.Scan.route,
-                onClick = { }
-            )
+        composable(route = Utils.Scan.route) {
+            ScanContent()
         }
-        composable(route = BottomBarScreen.Chat.route) {
-            ScreenContent(
-                name = BottomBarScreen.Chat.route,
-                onClick = { }
-            )
+        composable(route = Utils.Info.route) {
+            InfoContent()
         }
-        composable(route = BottomBarScreen.History.route) {
-            ScreenContent(
-                name = BottomBarScreen.History.route,
-                onClick = { }
-            )
+        composable(route = Utils.History.route) {
+            HistoryContent()
         }
-        composable(route = BottomBarScreen.Profile.route) {
-            ProfileContent(
-                name = BottomBarScreen.Profile.route,
-            )
+        composable(route = Utils.Profile.route) {
+            ProfileContent(rootNavController = rootNavController)
         }
-        //detailsNavGraph(navController = navController)
     }
 }
-
-//fun NavGraphBuilder.detailsNavGraph(navController: NavHostController) {
-//    navigation(
-//        route = Graph.DETAILS,
-//        startDestination = DetailsScreen.Information.route
-//    ) {
-//        composable(route = DetailsScreen.Information.route) {
-//            ScreenContent(name = DetailsScreen.Information.route) {
-//                navController.navigate(DetailsScreen.Overview.route)
-//            }
-//        }
-//        composable(route = DetailsScreen.Overview.route) {
-//            ScreenContent(name = DetailsScreen.Overview.route) {
-//                navController.popBackStack(
-//                    route = DetailsScreen.Information.route,
-//                    inclusive = false
-//                )
-//            }
-//        }
-//    }
-//}
-

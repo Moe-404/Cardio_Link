@@ -1,59 +1,218 @@
 package com.example.cardiolink.views
 
-import androidx.compose.foundation.clickable
+import android.net.Uri
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.cardiolink.components.MyImageArea
 import com.example.cardiolink.viewModels.AuthViewModel
+import com.example.cardiolink.viewModels.ScanViewModel
+import java.io.File
 
 @Composable
-fun ScreenContent(name: String, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+fun HomeContent() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            modifier = Modifier.clickable { onClick() },
-            text = name,
-            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-            fontWeight = FontWeight.Bold
+            text = "Welcome to CardioLink!",
+            style = MaterialTheme.typography.headlineMedium
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "CardioLink is an app designed to help you monitor your heart health. " +
+                    "It allows you to scan and analyze your heartbeats, providing valuable insights and information.",
+            style = MaterialTheme.typography.bodyLarge
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Tips for Heart Health:",
+            style = MaterialTheme.typography.headlineMedium
+
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "1. Maintain a healthy diet rich in fruits, vegetables, and whole grains.\n" +
+                    "2. Exercise regularly. Aim for at least 30 minutes of moderate-intensity exercise a day.\n" +
+                    "3. Avoid smoking and limit alcohol consumption.\n" +
+                    "4. Manage stress through activities like meditation, yoga, or deep breathing exercises.\n" +
+                    "5. Regularly check your heart health using CardioLink.",
+            style = MaterialTheme.typography.bodyLarge
         )
     }
 }
-
-//@Composable
-//fun HomeContent(name: String) {
-//
-//}
-//fun ScanContent(name: String) {
-//
-//}
-//fun ChatContent(name: String) {
-//
-//}
-//fun HistoryContent(name: String) {
-//}
 @Composable
-fun ProfileContent(name: String) {
-    val authViewModel: AuthViewModel = viewModel()
-    Button(
-        onClick = {
-            authViewModel.signOut()
-        },
+fun ScanContent() {
+    val context = LocalContext.current
+    val scanViewModel: ScanViewModel = viewModel()
+    scanViewModel.setContext(context)
+    Scaffold { paddingValues ->
+        Box (
+            modifier = Modifier
+                .padding(paddingValues)
+        ){
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+
+                val uri = remember { mutableStateOf<Uri?>(null) }
+
+                //image to show bottom sheet
+                MyImageArea(
+                    directory = File(context.cacheDir, "images"),
+                    uri = uri.value,
+                    onSetUri = {
+                        uri.value = it
+                    },
+                    upload = {
+                        scanViewModel.upload(it)
+                    }
+                )
+            }
+        }
+    }
+}
+@Composable
+fun InfoContent() {
+    val classes = listOf(
+        "Normal beat",
+        "Supraventricular premature beat",
+        "Premature ventricular contraction",
+        "Fusion of ventricular and normal beat",
+        "Unclassifiable beat",
+        "myocardial infarction"
+    )
+
+    LazyColumn {
+        items(classes) { className ->
+            ClassInfoCard(className = className)
+        }
+    }
+}
+
+@Composable
+fun ClassInfoCard(className: String) {
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(8.dp),
+        elevation = CardDefaults.cardElevation()
     ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+        ) {
+            Text(
+                text = className,
+                style = MaterialTheme.typography.headlineLarge
+            )
+            when (className) {
+                "Normal beat" -> {
+                    Text(
+                        text = "Normal beats are the regular electrical signals generated by the heart's sinoatrial (SA) node, resulting in the rhythmic contraction of the heart's chambers.\n" +
+                                "In a normal electrocardiogram (ECG), normal beats typically exhibit a P wave, QRS complex, and T wave in sequence, representing atrial depolarization, ventricular depolarization, and ventricular repolarization, respectively.\n" +
+                                "Normal beats are essential for maintaining effective circulation and oxygenation of the body's tissues and organs.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
+                "Supraventricular premature beat" -> {
+                    Text(
+                        text = "Supraventricular premature beats occur when electrical signals originating above the ventricles prematurely trigger a heartbeat, often interrupting the regular heart rhythm.\n" +
+                                "These premature beats can be caused by various factors such as stress, caffeine intake, or underlying heart conditions like atrial fibrillation.\n" +
+                                "While generally benign, frequent or sustained supraventricular premature beats may warrant further evaluation by a healthcare professional.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
+                "Premature ventricular contraction" -> {
+                    Text(
+                        text = "Premature ventricular contractions are abnormal heartbeats originating from the ventricles, occurring earlier than expected in the cardiac cycle.\n" +
+                                "PVCs are commonly characterized by a widened QRS complex on an ECG and may feel like a \"skipped\" or \"extra\" beat to the individual experiencing them.\n" +
+                                "While occasional PVCs are often harmless, frequent or symptomatic PVCs may indicate underlying heart conditions that require medical attention.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
+                "Fusion of ventricular and normal beat" -> {
+                    Text(
+                        text = "FPremature ventricular contractions are abnormal heartbeats originating from the ventricles, occurring earlier than expected in the cardiac cycle.\n" +
+                                "PVCs are commonly characterized by a widened QRS complex on an ECG and may feel like a \"skipped\" or \"extra\" beat to the individual experiencing them.\n" +
+                                "While occasional PVCs are often harmless, frequent or symptomatic PVCs may indicate underlying heart conditions that require medical attention.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
+                "Unclassifiable beat" -> {
+                    Text(
+                        text = "Unclassifiable beats refer to cardiac rhythms or waveforms that cannot be confidently categorized into specific arrhythmia types or normal variants based on standard criteria.\n" +
+                                "These beats may exhibit atypical waveform morphologies, irregularities, or artifacts that obscure accurate classification.\n" +
+                                "Unclassifiable beats may require further assessment using alternative diagnostic methods or expert interpretation to determine their clinical significance.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
+                "myocardial infarction" -> {
+                    Text(
+                        text = "Myocardial infarction, commonly known as a heart attack, occurs when blood flow to a part of the heart muscle is severely reduced or blocked, leading to tissue damage or death.\n" +
+                                "Symptoms of myocardial infarction may include chest pain or discomfort, shortness of breath, nausea, sweating, and lightheadedness.\n" +
+                                "Prompt medical intervention, such as reperfusion therapy or coronary artery bypass surgery, is crucial to minimize heart muscle damage and improve the chances of survival following a heart attack.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+        }
+    }
+}
+fun HistoryContent() {
+}
+@Composable
+fun ProfileContent(rootNavController: NavController) {
+    val authViewModel: AuthViewModel = viewModel()
+    //sign out
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentWidth(Alignment.CenterHorizontally),
+        onClick = {
+        authViewModel.signOut()
+        rootNavController.navigate("login"){
+            popUpTo("profile"){ inclusive = true }
+        }
+    }) {
         Text(text = "Sign Out")
     }
 }

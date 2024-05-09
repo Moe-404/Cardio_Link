@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -46,7 +46,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.cardiolink.R
 import com.example.cardiolink.graphs.AuthScreen
 import com.example.cardiolink.graphs.Graph
@@ -60,7 +59,7 @@ class DashBoardActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                RootNavigationGraph(navController = rememberNavController())
+                RootNavigationGraph()
             }
         }
     }
@@ -88,7 +87,7 @@ fun SplashScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(16.dp)
         )
-        Text(text = "Cardio Link", color = MaterialTheme.colorScheme.onPrimary)
+        Text(text = "Cardio Link", color = Color.White)
     }
 }
 
@@ -102,7 +101,7 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
     val firebaseUser by authViewModel.userData.observeAsState(initial = null)
     LaunchedEffect(firebaseUser) {
         if (firebaseUser != null) {
-            navController.navigate(Graph.HOME) {
+            navController.navigate(Graph.HomeGraph) {
                 popUpTo(AuthScreen.Login.route) { inclusive = true }
             }
         }
@@ -179,12 +178,6 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
             Text(text = "Login")
         }
 
-        ErrorDialog(
-            showDialog = showErrorDialog,
-            onDismiss = { showErrorDialog = false },
-            errorMessage = errorMessage
-        )
-
         Spacer(modifier = Modifier.height(16.dp))
 
         TextButton(
@@ -220,7 +213,7 @@ fun RegisterScreen(navController: NavController, authViewModel: AuthViewModel) {
     val firebaseUser by authViewModel.userData.observeAsState(initial = null)
     LaunchedEffect(firebaseUser) {
         if (firebaseUser != null) {
-            navController.navigate(Graph.HOME) {
+            navController.navigate(Graph.HomeGraph) {
                 popUpTo(AuthScreen.SignUp.route) { inclusive = true }
             }
         }
@@ -324,12 +317,6 @@ fun RegisterScreen(navController: NavController, authViewModel: AuthViewModel) {
         ) {
             Text(text = "Already have an account? Login")
         }
-
-        ErrorDialog(
-            showDialog = showErrorDialog,
-            onDismiss = { showErrorDialog = false },
-            errorMessage = errorMessage
-        )
     }
 }
 
@@ -373,6 +360,9 @@ fun ForgotPasswordScreen(navController: NavController) {
             onClick = {
                 // Perform forgot password logic here
                 // For simplicity, navigate back to Login screen
+//                navController.navigate(AuthScreen.Login.route) {
+//                    popUpTo(AuthScreen.Forgot.route) { inclusive = true }
+//                }
                 navController.popBackStack()
             },
             modifier = Modifier
@@ -381,32 +371,5 @@ fun ForgotPasswordScreen(navController: NavController) {
         ) {
             Text(text = "Reset Password")
         }
-    }
-}
-
-@Composable
-fun ErrorDialog(showDialog: Boolean, onDismiss: () -> Unit, errorMessage: String) {
-    if (showDialog) {
-        androidx.compose.material3.AlertDialog(
-            onDismissRequest = onDismiss,
-            title = {
-                Text(text = "Error")
-            },
-            text = {
-                Text(text = errorMessage)
-            },
-            confirmButton = {
-                Button(onClick = onDismiss) {
-                    Text("OK")
-                }
-            },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Warning,
-                    contentDescription = "Error",
-                    tint = MaterialTheme.colorScheme.error
-                )
-            }
-        )
     }
 }

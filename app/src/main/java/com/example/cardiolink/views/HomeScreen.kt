@@ -8,7 +8,9 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -21,34 +23,44 @@ import com.example.cardiolink.graphs.HomeNavGraph
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(navController: NavHostController = rememberNavController()) {
+fun HomeScreen(
+    rootNavController: NavHostController,
+    homeNavController: NavHostController = rememberNavController()
+) {
     Scaffold(
-        bottomBar = { BottomBar(navController = navController) }
+        bottomBar = { BottomBar(homeNavController = homeNavController) }
     ) {
-        HomeNavGraph(navController = navController)
+        HomeNavGraph(
+            rootNavController,
+            homeNavController
+        )
     }
 }
 
 @Composable
-fun BottomBar(navController: NavHostController) {
+fun BottomBar(homeNavController: NavHostController) {
     val screens = listOf(
-        BottomBarScreen.Home,
-        BottomBarScreen.Scan,
-        BottomBarScreen.Chat,
-        BottomBarScreen.History,
-        BottomBarScreen.Profile,
+        Utils.Home,
+        Utils.Scan,
+        Utils.Info,
+        Utils.History,
+        Utils.Profile,
     )
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
+    val navBackStackEntry by homeNavController.currentBackStackEntryAsState()
+    val currentRoute by remember(navBackStackEntry) {
+        derivedStateOf {
+            navBackStackEntry?.destination?.route
+        }
+    }
 
-    val bottomBarDestination = screens.any { it.route == currentDestination?.route }
+    val bottomBarDestination = screens.any { it.route == currentRoute }
     if (bottomBarDestination) {
         NavigationBar {
             screens.forEach { screen ->
                 AddItem(
                     screen = screen,
-                    currentDestination = currentDestination,
-                    navController = navController
+                    currentDestination = navBackStackEntry?.destination,
+                    navController = homeNavController
                 )
             }
         }
@@ -57,16 +69,16 @@ fun BottomBar(navController: NavHostController) {
 
 @Composable
 fun RowScope.AddItem(
-    screen: BottomBarScreen,
+    screen: Utils,
     currentDestination: NavDestination?,
     navController: NavHostController,
 ) {
     val icon = when (screen) {
-        BottomBarScreen.Home -> painterResource(id = R.drawable.home_24)
-        BottomBarScreen.Scan -> painterResource(id = R.drawable.pulse_24)
-        BottomBarScreen.Chat -> painterResource(id = R.drawable.messages_24)
-        BottomBarScreen.History -> painterResource(id = R.drawable.history_24)
-        BottomBarScreen.Profile -> painterResource(id = R.drawable.user_24)
+        Utils.Home -> painterResource(id = R.drawable.home_24)
+        Utils.Scan -> painterResource(id = R.drawable.pulse_24)
+        Utils.Info -> painterResource(id = R.drawable.messages_24)
+        Utils.History -> painterResource(id = R.drawable.history_24)
+        Utils.Profile -> painterResource(id = R.drawable.user_24)
     }
     NavigationBarItem(label = {
         Text(text = screen.title)
@@ -82,5 +94,5 @@ fun RowScope.AddItem(
             popUpTo(navController.graph.findStartDestination().id)
             launchSingleTop = true
         }
-    })
+    }, alwaysShowLabel = false)
 }
